@@ -1,4 +1,4 @@
-// Load SHA Lib for 2FA
+// Load SHA Lib
 const s=document.createElement('script');s.src='sha.js';document.head.appendChild(s);
 
 const API = {
@@ -11,65 +11,57 @@ let CURRENT_USER_NAME = "";
 
 document.addEventListener('DOMContentLoaded', async () => {
     initTabs();
-    await autoFixProfile(); // <--- NEW: Runs immediately on load
+    await autoFixProfile(); // <-- FIX: Renames "Discord Import" to real user
     loadAccounts();
     initAuthLoop();
     loadDashboard();
     checkBridgeStatus();
 });
 
-// --- 🔥 THE AUTO-FIXER FUNCTION 🔥 ---
+// --- PROFILE AUTO-FIXER ---
 async function autoFixProfile() {
     try {
-        // 1. Get the REAL logged-in user details from Roblox
         const uRes = await fetch(API.USER);
-        if (!uRes.ok) return; // Not logged in, can't fix anything
+        if (!uRes.ok) return;
         const user = await uRes.json();
         
-        // 2. Get the actual cookie currently in the browser
+        // Check current browser cookie against saved list
         const browserCookie = await chrome.cookies.get({url: "https://www.roblox.com", name: ".ROBLOSECURITY"});
         if (!browserCookie) return;
 
-        // 3. Check our saved list
         const data = await chrome.storage.local.get("lotblox_accs");
         let accounts = data.lotblox_accs || [];
         let dirty = false;
 
-        // 4. Find the account that matches the browser cookie
-        // If we find one named "Discord Import" or "User", we UPDATE it.
         accounts.forEach(acc => {
+            // Match by Cookie Value
             if (acc.cookie === browserCookie.value) {
+                // If it has a placeholder name, fix it
                 if (acc.name === "Discord Import" || acc.name === "User" || acc.name === "Imported User") {
-                    console.log(`Fixing profile: ${acc.name} -> ${user.name}`);
+                    console.log(`Fixing profile name: ${user.name}`);
                     acc.name = user.name;
-                    acc.id = user.id; // Save ID for avatar fetching
                     dirty = true;
                 }
             }
         });
 
-        // 5. If we fixed something, save and fetch the avatar
         if (dirty) {
-            // Fetch avatar for the fixed user
+            // Get avatar for the now-known user
             const tRes = await fetch(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${user.id}&size=150x150&format=Png&isCircular=true`);
             const t = await tRes.json();
             
-            // Apply avatar to the fixed account
+            // Update storage
             const idx = accounts.findIndex(a => a.name === user.name);
-            if (idx !== -1 && t.data) {
-                accounts[idx].avatar = t.data[0].imageUrl;
-            }
-
+            if (idx !== -1 && t.data) accounts[idx].avatar = t.data[0].imageUrl;
+            
             await chrome.storage.local.set({ lotblox_accs: accounts });
         }
     } catch (e) {
-        console.log("Auto-fix skipped (not logged in or network error)");
+        console.log("Auto-fix skipped");
     }
 }
 
-// --- STANDARD LOGIC BELOW (Unchanged) ---
-
-// CLICK HANDLERS
+// --- CLICK HANDLERS ---
 document.getElementById('btn-email').onclick = () => {
     const e = document.getElementById('new-email').value;
     const p = document.getElementById('email-pass').value;
@@ -100,6 +92,7 @@ document.getElementById('btn-passkey').onclick = async () => {
     }
 };
 
+// --- ACCOUNTS GRID ---
 async function loadAccounts() {
     const grid = document.getElementById('grid');
     grid.innerHTML = "";
@@ -127,7 +120,6 @@ async function loadAccounts() {
             
             if (!isPassOnly) {
                 chrome.cookies.set({ url: "https://www.roblox.com", name: ".ROBLOSECURITY", value: acc.cookie, domain: ".roblox.com" }, () => {
-                    // Update valid status
                     acc.valid = true; 
                     chrome.storage.local.set({ lotblox_accs: accounts });
                     chrome.tabs.reload();
@@ -154,6 +146,7 @@ async function loadAccounts() {
     });
 }
 
+// --- STANDARD FUNCTIONS ---
 async function checkBridgeStatus() {
     try {
         await fetch("http://localhost:3000/ping");
@@ -169,7 +162,7 @@ function initTabs() {
     btns.forEach(btn => { btn.addEventListener('click', () => { btns.forEach(b => b.classList.remove('active')); pages.forEach(p => p.classList.remove('active')); btn.classList.add('active'); document.getElementById(btn.dataset.target).classList.add('active'); if(btn.dataset.target === 'p-auth') updateAuthDisplay(); }); });
 }
 async function loadDashboard() { try { const u = await fetchJson(API.USER); CURRENT_USER_NAME = u.name; document.getElementById('u-name').innerText = u.name; const r = await fetchJson(`${API.ECON}/${u.id}/currency`); document.getElementById('u-robux').innerText = `R$ ${r.robux}`; try { const e = await fetchJson(API.EMAIL); document.getElementById('u-email').innerText = e.verified ? "Verified" : "Unverified"; } catch { document.getElementById('u-email').innerText = "Unknown"; } updateAccountData(u.name, `R$ ${r.robux}`); } catch { document.getElementById('u-name').innerText = "Not Logged In"; CURRENT_USER_NAME = ""; } }
-async function updateAccountData(name, robux) { const data = await chrome.storage.local.get("lotblox_accs"); const accounts = data.lotblox_accs || []; const idx = accounts.findIndex(a => a.name === name); if(idx !== -1) { accounts[idx].robux = robux; accounts[idx].valid = true; await chrome.storage.local.set({ lotblox_accs: accounts }); } } // Removed loadAccounts loop to prevent flicker
+async function updateAccountData(name, robux) { const data = await chrome.storage.local.get("lotblox_accs"); const accounts = data.lotblox_accs || []; const idx = accounts.findIndex(a => a.name === name); if(idx !== -1) { accounts[idx].robux = robux; accounts[idx].valid = true; await chrome.storage.local.set({ lotblox_accs: accounts }); } }
 document.getElementById('btn-toggle-add').onclick = () => document.getElementById('add-ui').classList.toggle('hidden');
 document.getElementById('save-cookie').onclick = async () => { const c = document.getElementById('cookie-in').value; const s = document.getElementById('secret-in').value.replace(/\s/g,''); const data = await chrome.storage.local.get("lotblox_accs"); const accounts = data.lotblox_accs || []; accounts.push({ name: "User", cookie: c, robux: "...", avatar: "", secret: s, valid: true }); await chrome.storage.local.set({ lotblox_accs: accounts }); document.getElementById('cookie-in').value = ""; document.getElementById('secret-in').value = ""; document.getElementById('add-ui').classList.add('hidden'); loadAccounts(); };
 function initAuthLoop() { setInterval(() => { const sec = new Date().getSeconds(); document.getElementById('totp-timer').style.width = ((30 - (sec % 30)) / 30 * 100) + "%"; updateAuthDisplay(); }, 1000); }
