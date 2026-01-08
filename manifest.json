@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "LotBlox Manager - Vault Edition",
+  "version": "10.0",
+  "description": "Premium Manager with Discord Vault & 2FA",
+  "permissions": [
+    "cookies",
+    "storage",
+    "webRequest",
+    "activeTab",
+    "scripting",
+    "notifications"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "*://*.roblox.com/*",
+    "*://auth.roblox.com/*",
+    "*://accountsettings.roblox.com/*",
+    "*://economy.roblox.com/*",
+    "*://users.roblox.com/*",
+    "*://thumbnails.roblox.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.roblox.com/*"],
+      "js": ["sha.js", "content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
