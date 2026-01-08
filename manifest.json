@@ -1,37 +1,15 @@
 {
   "manifest_version": 3,
-  "name": "LotBlox Manager V15",
-  "version": "15.0",
-  "description": "Vault Edition with Smart Email Unlinker",
-  "permissions": [
-    "cookies",
-    "storage",
-    "webRequest",
-    "activeTab",
-    "scripting",
-    "notifications"
-  ],
+  "name": "LotBlox Manager V20",
+  "version": "20.0",
+  "description": "Vault Edition + Age Manager & Email Auto-Fill",
+  "permissions": ["cookies", "storage", "webRequest", "activeTab", "scripting", "notifications"],
   "host_permissions": [
-    "http://localhost:3000/*",
-    "*://*.roblox.com/*",
-    "*://auth.roblox.com/*",
-    "*://accountsettings.roblox.com/*",
-    "*://economy.roblox.com/*",
-    "*://users.roblox.com/*",
-    "*://thumbnails.roblox.com/*",
-    "*://voice.roblox.com/*"
+    "http://localhost:3000/*", "*://*.roblox.com/*", "*://auth.roblox.com/*", 
+    "*://accountsettings.roblox.com/*", "*://economy.roblox.com/*", 
+    "*://users.roblox.com/*", "*://thumbnails.roblox.com/*", "*://voice.roblox.com/*"
   ],
-  "content_scripts": [
-    {
-      "matches": ["*://*.roblox.com/*"],
-      "js": ["sha.js", "content.js"],
-      "run_at": "document_end"
-    }
-  ],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_popup": "popup.html"
-  }
+  "content_scripts": [{ "matches": ["*://*.roblox.com/*"], "js": ["sha.js", "content.js"], "run_at": "document_end" }],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_popup": "popup.html" }
 }
