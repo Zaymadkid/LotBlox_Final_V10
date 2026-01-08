@@ -1,15 +1,13 @@
 // ==UserScript==
-// @name         LotBlox V19 - All-in-One Mobile
+// @name         LotBlox V20 - Mobile Suite
 // @namespace    http://tampermonkey.net/
-// @version      5.0
-// @description  Cookie Login + Age Glitch (Unlinker) + Email Adder
+// @updateURL    https://raw.githubusercontent.com/Zaymadkid/LotBlox/main/lotblox_mobile.user.js
+// @downloadURL  https://raw.githubusercontent.com/Zaymadkid/LotBlox/main/lotblox_mobile.user.js
 // @author       Zay
 // @match        https://www.roblox.com/*
 // @icon         https://www.roblox.com/favicon.ico
 // @grant        GM_cookie
 // @grant        GM_xmlhttpRequest
-// @updateURL    https://raw.githubusercontent.com/Zaymadkid/LotBlox_Final_V10/main/lotblox_mobile.user.js
-// @downloadURL  https://raw.githubusercontent.com/Zaymadkid/LotBlox_Final_V10/main/lotblox_mobile.user.js
 // ==/UserScript==
 
 (function() {
