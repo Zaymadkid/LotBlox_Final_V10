@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "LotBlox Manager V12",
-  "version": "12.0",
-  "description": "Vault Edition with Profile Auto-Fixer",
+  "name": "LotBlox Manager V15",
+  "version": "15.0",
+  "description": "Vault Edition with Smart Email Unlinker",
   "permissions": [
     "cookies",
     "storage",
@@ -18,7 +18,8 @@
     "*://accountsettings.roblox.com/*",
     "*://economy.roblox.com/*",
     "*://users.roblox.com/*",
-    "*://thumbnails.roblox.com/*"
+    "*://thumbnails.roblox.com/*",
+    "*://voice.roblox.com/*"
   ],
   "content_scripts": [
     {
