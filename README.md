@@ -1,7 +1,6 @@
-# 🎮 LotBlox Manager - Vault Edition (V20: Age Manager & Email Auto-Fill)
+# 🎮 LotBlox Manager - Vault Edition (V21: Mobile Suite)
 
-**LotBlox Manager** is a premium browser extension for advanced Roblox account management. V20 introduces the **Age Manager Glitch**, **Email Auto-Fill**, enhanced Discord bridge integration, and powerful account automation tools.
-
+**LotBlox Manager** is a premium browser extension for advanced Roblox account management. V21 introduces the **Mobile Suite** - a powerful mobile userscript with draggable UI controls, enhanced Discord bridge integration, and seamless account automation tools.
 ---
 
 ## ✨ Key Features
@@ -188,6 +187,6 @@ For issues, questions, or feature requests, please open an issue on GitHub.
 
 ---
 
-**Version 20.0** - Age Manager & Email Auto-Fill Edition  
+**Version 20.0** - Mobile Suite Edition  
 **Author:** Zaymadkid  
 **Repository:** [github.com/Zaymadkid/LotBlox](https://github.com/Zaymadkid/LotBlox)
