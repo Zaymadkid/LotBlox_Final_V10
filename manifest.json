@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "LotBlox Manager V20",
-  "version": "20.0",
+  "name": "LotBlox Manager V21",
+  "version": "21.0
   "description": "Vault Edition + Age Manager & Email Auto-Fill",
   "permissions": ["cookies", "storage", "webRequest", "activeTab", "scripting", "notifications"],
   "host_permissions": [
