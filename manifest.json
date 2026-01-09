@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "LotBlox Manager V20",
-  "version": "20.0",
-  "description": "Vault Edition + Age Manager & Email Auto-Fill",
+  "name": "LotBlox Manager V20 (Online)",
+  "version": "20.1",
+  "description": "Vault + Age Manager + Online Bridge",
   "permissions": [
     "cookies",
     "storage",
@@ -13,6 +13,7 @@
   ],
   "host_permissions": [
     "http://localhost:3000/*",
+    "https://*.onrender.com/*",
     "*://*.roblox.com/*",
     "*://auth.roblox.com/*",
     "*://accountsettings.roblox.com/*",
