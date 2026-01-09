@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "LotBlox Manager V20 (Online)",
-  "version": "20.1",
+  "version": "20.2",
   "description": "Vault + Age Manager + Online Bridge",
   "permissions": [
     "cookies",
@@ -14,6 +14,7 @@
   "host_permissions": [
     "http://localhost:3000/*",
     "https://*.onrender.com/*",
+    "https://*.replit.dev/*",
     "*://*.roblox.com/*",
     "*://auth.roblox.com/*",
     "*://accountsettings.roblox.com/*",
