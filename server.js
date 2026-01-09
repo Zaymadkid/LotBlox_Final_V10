@@ -1,81 +1,51 @@
-const { Client, GatewayIntentBits } = require('discord.js');
 const express = require('express');
+const { Client, GatewayIntentBits } = require('discord.js');
 const cors = require('cors');
-
-const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent
-    ]
-});
+const bodyParser = require('body-parser');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
 
-// Store for pending requests
-const pendingRequests = new Map();
+let pendingCommand = { command: "NONE" };
 
-client.once('ready', () => {
-    console.log(`Logged in as ${client.user.tag}!`);
+// Root Route for Verification
+app.get('/', (req, res) => res.send("<h1>🟢 LotBlox Bridge is ONLINE</h1><p>The extension can talk to me now.</p>"));
+
+app.get('/ping', (req, res) => res.send("pong"));
+
+app.get('/get-command', (req, res) => {
+    res.json(pendingCommand);
+    if (pendingCommand.command !== "NONE") pendingCommand = { command: "NONE" };
 });
 
-// Handle messages from Discord
+// LISTEN ON 0.0.0.0 (REQUIRED FOR REPLIT)
+app.listen(3000, '0.0.0.0', () => console.log("✅ Server running on 0.0.0.0:3000"));
+
+const client = new Client({ 
+    intents: [
+        GatewayIntentBits.Guilds, 
+        GatewayIntentBits.GuildMessages, 
+        GatewayIntentBits.MessageContent
+    ] 
+});
+
 client.on('messageCreate', async (message) => {
-    if (message.author.bot) return;
+    if (message.author.bot || !message.content.startsWith('!')) return;
     
-    // Check if this is a response to a pending request
-    const channelRequests = Array.from(pendingRequests.entries())
-        .filter(([id, req]) => req.channelId === message.channel.id);
+    const args = message.content.slice(1).trim().split(/ +/);
+    const command = args.shift().toLowerCase();
     
-    if (channelRequests.length > 0) {
-        const [requestId, request] = channelRequests[0];
-        request.resolve(message.content);
-        pendingRequests.delete(requestId);
+    if (command === 'cookie') { 
+        pendingCommand = { command: "ADD_ACCOUNT", cookie: args[0] }; 
+        message.reply("✅ Cookie Queued"); 
     }
-});
-
-// API endpoint to send messages to Discord
-app.post('/send', async (req, res) => {
-    try {
-        const { channelId, message } = req.body;
-        const channel = await client.channels.fetch(channelId);
-        await channel.send(message);
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+    
+    if (command === 'login') { 
+        const [u, p] = args[0].split(':'); 
+        pendingCommand = { command: "ADD_LOGIN", username: u, password: p }; 
+        message.reply("✅ Login Queued"); 
     }
-});
-
-// API endpoint to get messages from Discord
-app.post('/receive', async (req, res) => {
-    try {
-        const { channelId, timeout = 30000 } = req.body;
-        
-        const requestId = Date.now().toString();
-        const promise = new Promise((resolve, reject) => {
-            pendingRequests.set(requestId, {
-                channelId,
-                resolve,
-                reject,
-                timeout: setTimeout(() => {
-                    pendingRequests.delete(requestId);
-                    reject(new Error('Timeout'));
-                }, timeout)
-            });
-        });
-        
-        const response = await promise;
-        res.json({ success: true, message: response });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-});
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
 });
 
 client.login(process.env.BOT_TOKEN);
